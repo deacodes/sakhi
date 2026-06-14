@@ -302,11 +302,13 @@ body.landing {
   margin-bottom: 24px;
 }
 .chart-box {
+  flex: 1;
   background: white;
-  border: 1px solid var(--gray-200);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 20px;
-  min-height: 220px;
+  min-width: 0;
+  max-height: 280px;
+  overflow: hidden;
 }
 .chart-box-title {
   font-family: var(--font-head);
