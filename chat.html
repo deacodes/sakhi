@@ -49,11 +49,12 @@
 
         <!-- Input bar -->
         <div class="chat-input-bar">
-          <button class="mic-btn">🎤</button>
+          <button class="mic-btn" id="micBtn" title="Click to talk">🎤</button>
+          
+          
           <input class="chat-input" type="text" placeholder="Enter text here..." id="chatInput" />
           <button class="send-btn" id="sendBtn">✈️</button>
         </div>
-      </div>
 
       <!-- Right sidebar -->
       <div class="chat-sidebar">
@@ -88,7 +89,9 @@
   </main>
 
   <script type="module" src="chat.js"></script>
-
+  <!-- Indic Transliteration Library -->
+  <script src="https://unpkg.com/@sanskrit-coders/sanscript@1.2.0/sanscript.js"></script>
+  <script src="speechtotext.js"></script>
 </body>
 
 </html>
