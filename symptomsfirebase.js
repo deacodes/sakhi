@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getUserId } from './user.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCetu86df8EVlyhzBYlcOp1vRUjypQYZLk",
@@ -26,12 +27,15 @@ async function loadSymptoms() {
     if (!list) return;
 
     try {
-        const q = query(collection(db, 'symptoms'), orderBy('timestamp', 'desc'));
+        const q = query(
+            collection(db, 'symptoms'),
+            where('userId', '==', getUserId()),
+            orderBy('timestamp', 'desc')
+        );
         const snapshot = await getDocs(q);
 
         if (snapshot.empty) return;
 
-        // Clear hardcoded cards
         list.innerHTML = '';
 
         snapshot.forEach((doc) => {
