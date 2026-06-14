@@ -43,18 +43,7 @@
             (Write in whatever language feels natural — I understand code-switching and mixed languages.)
           </div>
 
-          <!-- User message -->
-          <div class="msg-user">
-            hamaar doodh mein dard baa, chhati bhi bhaari lagta, saans lene mein takleef hota
-          </div>
 
-          <!-- Sakhi response -->
-          <div class="msg-sakhi">
-            <span class="severity-pill pill-see-doctor">See A Doctor</span><br>
-            Aapke doodh mein dard aur chhati ka bhaari lagna, saans lene mein takleef hona chintajanak hai. Yeh sabhi
-            symptoms kuch serious health issues ki nishani ho sakte hain. Kripya ek doctor se sampark karein ya hospital
-            jaane ka vichar karein.
-          </div>
 
         </div>
 
@@ -62,7 +51,7 @@
         <div class="chat-input-bar">
           <button class="mic-btn">🎤</button>
           <input class="chat-input" type="text" placeholder="Enter text here..." id="chatInput" />
-          <button class="send-btn" onclick="sendMessage()">✈️</button>
+          <button class="send-btn" id="sendBtn">✈️</button>
         </div>
       </div>
 
@@ -73,13 +62,13 @@
           <div class="chat-sidebar-title">Language Distribution</div>
           <div class="lang-bar-row">
             <div class="lang-bar-item">
-              <div class="lang-bar-label">Hindi</div>
+              <div class="lang-bar-label">...</div>
               <div class="lang-bar-track">
                 <div class="lang-bar-fill fill-pink" style="width:62%;"></div>
               </div>
             </div>
             <div class="lang-bar-item" style="margin-top:8px;">
-              <div class="lang-bar-label">Bhoj</div>
+              <div class="lang-bar-label">...</div>
               <div class="lang-bar-track">
                 <div class="lang-bar-fill fill-purple" style="width:38%;"></div>
               </div>
@@ -90,18 +79,7 @@
         <div class="chat-sidebar-section">
           <div class="chat-sidebar-title">Clinical Terms</div>
           <div class="clinical-terms-list">
-            <div class="clinical-term-row">
-              <span class="ct-original">doodh mein dard</span>
-              <span class="ct-clinical">Chest pain / Angina</span>
-            </div>
-            <div class="clinical-term-row">
-              <span class="ct-original">chhati bhaari lagta</span>
-              <span class="ct-clinical">Chest heaviness / Tightness</span>
-            </div>
-            <div class="clinical-term-row">
-              <span class="ct-original">saans lene mein takleef</span>
-              <span class="ct-clinical">Dyspnea / Shortness of breath</span>
-            </div>
+
           </div>
         </div>
 
@@ -109,7 +87,7 @@
     </div>
   </main>
 
-  <script src="chat.js"></script>
+  <script type="module" src="chat.js"></script>
 
 </body>
 
