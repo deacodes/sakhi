@@ -215,16 +215,44 @@
       document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
     }
-    function toggleTranslation(btn, text) {
-      const bubble = btn.nextElementSibling;
-      if (bubble.style.display === 'none') {
-        bubble.style.display = 'inline-block';
-        btn.textContent = 'Hide →';
-      } else {
-        bubble.style.display = 'none';
-        btn.textContent = 'Translate →';
-      }
-    }
+   async function toggleTranslation(btn, preText, originalText) {
+  const bubble = btn.nextElementSibling;
+
+  if (bubble.style.display !== 'none') {
+    bubble.style.display = 'none';
+    btn.textContent = 'Translate →';
+    return;
+  }
+
+  if (bubble.textContent.trim()) {
+    bubble.style.display = 'inline-block';
+    btn.textContent = 'Hide →';
+    return;
+  }
+
+  if (preText) {
+    bubble.textContent = preText;
+    bubble.style.display = 'inline-block';
+    btn.textContent = 'Hide →';
+    return;
+  }
+
+  btn.textContent = 'Translating...';
+  try {
+    const response = await fetch(
+      `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${encodeURIComponent(originalText)}`
+    );
+    const data = await response.json();
+    const translated = data[0].map(item => item[0]).join("").trim();
+
+    bubble.textContent = translated || "Translation unavailable.";
+    bubble.style.display = 'inline-block';
+    btn.textContent = 'Hide →';
+  } catch (err) {
+    btn.textContent = 'Translate →';
+    console.error("Translation failed:", err);
+  }
+}
     function submitPost() {
       const textarea = document.querySelector('.modal-textarea');
       const text = textarea.value.trim();
@@ -244,7 +272,8 @@
       closeModal();
     }
   </script>
-
+  <script src="translation.js"></script>
+  <script type="module" src="communityfirebase.js"></script>
 </body>
 
 </html>
