@@ -54,9 +54,9 @@ async function loadPosts() {
 
       const date = post.timestamp
         ? new Date(post.timestamp).toLocaleDateString("en-IN", {
-            day: "numeric",
-            month: "long"
-          })
+          day: "numeric",
+          month: "long"
+        })
         : "";
 
       const categoryClass = categoryClassMap[post.category] || "cat-general";
