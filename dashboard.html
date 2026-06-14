@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sakhi – Public Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><a href="index.html" style="color: white; text-decoration: none;">Sakhi</a></div>
+    <nav class="sidebar-nav">
+      <a href="chat.html">Health Chat</a>
+      <a href="community.html">Community</a>
+      <a href="health-log.html">Health Log</a>
+      <a href="dashboard.html" class="active">Public Dashboard</a>
+      <a href="symptoms.html">Symptoms</a>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Title -->
+    <div class="dashboard-center-title">Public Dashboard</div>
+    <div class="dashboard-center-sub">
+      Real-time anonymised health data from women across India.<br>
+      Designed for journalists, NGOs, and government health officials.
+    </div>
+
+    <!-- Stats row -->
+    <div class="stat-row">
+      <div class="stat-card dash-stat-card">
+        <div class="num">12000</div>
+        <div class="label">Women Reached</div>
+      </div>
+      <div class="stat-card dash-stat-card">
+        <div class="num">89</div>
+        <div class="label">Alerts</div>
+      </div>
+      <div class="stat-card dash-stat-card">
+        <div class="num">12000</div>
+        <div class="label">Supplies</div>
+      </div>
+      <div class="stat-card dash-stat-card">
+        <div class="num pink" style="color:var(--pink);">Fever</div>
+        <div class="label">Top Symptom</div>
+      </div>
+    </div>
+
+    <!-- India Health Heatmap -->
+    <div class="section-heading">India Health Heatmap</div>
+    <div class="heatmap-box">
+      <div class="heatmap-tabs">
+        <button class="heatmap-tab">Symptom Burden</button>
+        <button class="heatmap-tab outline">Supply Demand</button>
+        <button class="heatmap-tab outline">SOS Frequency</button>
+      </div>
+      <!-- SVG India map with bubbles -->
+      <div style="padding:16px 20px 20px;">
+        CHART HERE
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="chart-row">
+      <!-- Top Symptoms Over Time -->
+      <div class="chart-box">
+        CHART HERE
+      </div>
+      <!-- Something else -->
+      <div class="chart-box">
+        CHART HERE
+      </div>
+    </div>
+
+    <!-- NER Scanner -->
+    <div class="section-heading">Health Bulletin NER Scanner</div>
+
+    <div class="ner-article">
+      <div class="ner-article-title">Mock</div>
+      <div class="ner-article-text">lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem
+        lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem</div>
+      <button class="btn-ner">Run NER →</button>
+    </div>
+
+    <div class="ner-article">
+      <div class="ner-article-title">Mock</div>
+      <div class="ner-article-text">lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem
+        lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem</div>
+      <button class="btn-ner">Run NER →</button>
+    </div>
+
+    <div class="ner-article">
+      <div class="ner-article-title">Mock</div>
+      <div class="ner-article-text">lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem
+        lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem</div>
+      <button class="btn-ner">Run NER →</button>
+    </div>
+
+    <!-- NER input -->
+    <div class="ner-input-row">
+      <input class="ner-input" id="nerInput" placeholder="Enter Article" />
+      <button class="btn-ner" style="padding:12px 22px;border-radius:10px;" onclick="runNER()">Run NER →</button>
+    </div>
+
+    <!-- NER result -->
+    <div class="ner-result-box" id="nerResult">
+      <div class="ner-result-header">
+        <span class="ner-result-title">Extracted Entities</span>
+        <span class="severity-badge">Severity: medium</span>
+      </div>
+      <div class="ner-summary">The health bulletin reports surveillance activities for Kala-azar in Vaishali and
+        Muzaffarpur, with new PKDl cases identified and training for ASHA workers completed</div>
+      <div class="ner-entities">
+        <div class="ner-entity-group">
+          <label>🔴 Diseases (2)</label>
+          <span class="ner-tag disease">Kala-azar</span>
+          <span class="ner-tag disease">PKDL</span>
+        </div>
+        <div class="ner-entity-group">
+          <label>📍 Locations (2)</label>
+          <span class="ner-tag location">Vaishali</span>
+          <span class="ner-tag location">Muzaffarpur</span>
+        </div>
+        <div class="ner-entity-group">
+          <label>📊 Data Points</label>
+          <span class="ner-tag data">5 new PKDL cases identified</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:40px;"></div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.heatmap-tab').forEach(tab => {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.heatmap-tab').forEach(t => t.classList.add('outline'));
+        this.classList.remove('outline');
+      });
+    });
+
+    function runNER() {
+      const input = document.getElementById('nerInput').value.trim();
+      if (!input) return;
+      document.getElementById('nerResult').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+
+</html>

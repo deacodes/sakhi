@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sakhi – Community</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><a href="index.html" style="color: white; text-decoration: none;">Sakhi</a></div>
+    <nav class="sidebar-nav">
+      <a href="chat.html">Health Chat</a>
+      <a href="community.html" class="active">Community</a>
+      <a href="health-log.html">Health Log</a>
+      <a href="dashboard.html">Public Dashboard</a>
+      <a href="symptoms.html">Symptoms</a>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <h1 style="font-family:'Sora',sans-serif; font-size:52px; font-weight:800; color:var(--navy); margin-bottom:32px;">
+      Community</h1>
+
+    <div class="community-list">
+
+      <!-- Post 1 -->
+      <div class="community-card">
+        <div class="community-card-header">
+          <span class="community-author">Member</span>
+          <span class="category-pill cat-general">General</span>
+        </div>
+        <div class="community-text">pet dard ko kam karne ke liye hum kya kar sakte hain?</div>
+        <button class="btn-translate"
+          onclick="toggleTranslation(this, 'What can we do to reduce stomach pain?')">Translate →</button>
+        <div class="translation-bubble" style="display:none;">What can we do to reduce stomach pain?</div>
+        <span class="ai-verified">AI VERIFIED</span>
+      </div>
+
+      <!-- Post 2 -->
+      <div class="community-card">
+        <div class="community-card-header">
+          <span class="community-author">Member</span>
+          <span class="category-pill cat-periods">Periods</span>
+        </div>
+        <div class="community-text">mere period cramps ho rana hai bahut tez , main kya karun?</div>
+        <button class="btn-translate"
+          onclick="toggleTranslation(this, 'I have very severe period cramps, what should I do?')">Translate →</button>
+        <div class="translation-bubble" style="display:none;">I have very severe period cramps, what should I do?</div>
+        <span class="ai-verified">AI VERIFIED</span>
+      </div>
+
+      <!-- Post 3 -->
+      <div class="community-card">
+        <div class="community-card-header">
+          <span class="community-author">Member</span>
+          <span class="category-pill cat-nutrition">Nutrition</span>
+        </div>
+        <div class="community-text">I tried iron supplements from the Jan Aushadhi center and my fatigue has improved so
+          much in just two weeks!</div>
+      </div>
+
+      <!-- Post 4 -->
+      <div class="community-card">
+        <div class="community-card-header">
+          <span class="community-author">Member</span>
+          <span class="category-pill cat-pregnancy">Pregnancy</span>
+        </div>
+        <div class="community-text">kya pregnancy mein papaya khana safe hai? mujhe kisi ne mana kiya.</div>
+        <button class="btn-translate"
+          onclick="toggleTranslation(this, 'Is it safe to eat papaya during pregnancy? Someone told me not to.')">Translate
+          →</button>
+        <div class="translation-bubble" style="display:none;">Is it safe to eat papaya during pregnancy? Someone told me
+          not to.</div>
+        <span class="ai-verified">AI VERIFIED</span>
+      </div>
+
+      <!-- Post 5 -->
+      <div class="community-card">
+        <div class="community-card-header">
+          <span class="community-author">Member</span>
+          <span class="category-pill cat-mental">Mental Health</span>
+        </div>
+        <div class="community-text">Main bahut zyada stressed feel kar rahi hoon, koi tips batao please.</div>
+        <button class="btn-translate"
+          onclick="toggleTranslation(this, 'I am feeling very stressed, please share some tips.')">Translate →</button>
+        <div class="translation-bubble" style="display:none;">I am feeling very stressed, please share some tips.</div>
+        <span class="ai-verified">AI VERIFIED</span>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FAB -->
+  <button class="fab-post" onclick="openModal()">Post</button>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-title">New Post</div>
+      <div class="modal-sub">All posts are scanned for medical misinformation before publishing.</div>
+      <textarea class="modal-textarea" placeholder="Share your experience or ask a question..."></textarea>
+      <label class="modal-label">Category</label>
+      <div class="category-chips">
+        <button class="cat-chip" onclick="selectChip(this)">Pregnancy</button>
+        <button class="cat-chip" onclick="selectChip(this)">Periods</button>
+        <button class="cat-chip" onclick="selectChip(this)">Mental Health</button>
+        <button class="cat-chip" onclick="selectChip(this)">Nutrition</button>
+        <button class="cat-chip selected" onclick="selectChip(this)">General</button>
+      </div>
+      <div class="anon-row">
+        <span>👁️‍🗨️</span>
+        <span>Posting anonymously</span>
+      </div>
+      <button class="btn-post-modal" onclick="submitPost()">✈️ &nbsp;Post</button>
+    </div>
+  </div>
+
+  <script>
+    function openModal() {
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+    document.getElementById('modalOverlay').addEventListener('click', function (e) {
+      if (e.target === this) closeModal();
+    });
+    function selectChip(el) {
+      document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    function toggleTranslation(btn, text) {
+      const bubble = btn.nextElementSibling;
+      if (bubble.style.display === 'none') {
+        bubble.style.display = 'inline-block';
+        btn.textContent = 'Hide →';
+      } else {
+        bubble.style.display = 'none';
+        btn.textContent = 'Translate →';
+      }
+    }
+    function submitPost() {
+      const textarea = document.querySelector('.modal-textarea');
+      const text = textarea.value.trim();
+      if (!text) return;
+      const list = document.querySelector('.community-list');
+      const card = document.createElement('div');
+      card.className = 'community-card';
+      card.innerHTML = `
+        <div class="community-card-header">
+          <span class="community-author">Member</span>
+          <span class="category-pill cat-general">General</span>
+        </div>
+        <div class="community-text">${text}</div>
+      `;
+      list.prepend(card);
+      textarea.value = '';
+      closeModal();
+    }
+  </script>
+
+</body>
+
+</html>

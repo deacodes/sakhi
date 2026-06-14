@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sakhi – Health Chat</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><a href="index.html" style="color: white; text-decoration: none;">Sakhi</a></div>
+    <nav class="sidebar-nav">
+      <a href="chat.html" class="active">Health Chat</a>
+      <a href="community.html">Community</a>
+      <a href="health-log.html">Health Log</a>
+      <a href="dashboard.html">Public Dashboard</a>
+      <a href="symptoms.html">Symptoms</a>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main" style="padding-top: 40px; padding-bottom: 0; overflow: hidden;">
+
+    <h1 style="font-family:'Sora',sans-serif; font-size:48px; font-weight:800; margin-bottom:28px; line-height:1.1;">
+      <span style="color:var(--pink);">Health</span><span style="color:var(--navy);"> Chat</span>
+    </h1>
+
+    <div class="chat-layout">
+
+      <!-- Chat column -->
+      <div class="chat-col">
+        <div class="chat-messages" id="chatMessages">
+
+          <!-- Sakhi greeting -->
+          <div class="msg-sakhi">
+            Namaste! 🙏 Main Sakhi hoon — aapki health companion.<br><br>
+            Mujhe batayein aap kaisi feel kar rahi hain? Aap kisi bhi bhasha mein likh sakti hain — Hindi, English,
+            Hinglish, Urdu, Bhojpuri, Tamil, Bengali… jo bhi comfortable ho.<br><br>
+            (Write in whatever language feels natural — I understand code-switching and mixed languages.)
+          </div>
+
+          <!-- User message -->
+          <div class="msg-user">
+            hamaar doodh mein dard baa, chhati bhi bhaari lagta, saans lene mein takleef hota
+          </div>
+
+          <!-- Sakhi response -->
+          <div class="msg-sakhi">
+            <span class="severity-pill pill-see-doctor">See A Doctor</span><br>
+            Aapke doodh mein dard aur chhati ka bhaari lagna, saans lene mein takleef hona chintajanak hai. Yeh sabhi
+            symptoms kuch serious health issues ki nishani ho sakte hain. Kripya ek doctor se sampark karein ya hospital
+            jaane ka vichar karein.
+          </div>
+
+        </div>
+
+        <!-- Input bar -->
+        <div class="chat-input-bar">
+          <button class="mic-btn">🎤</button>
+          <input class="chat-input" type="text" placeholder="Enter text here..." id="chatInput" />
+          <button class="send-btn" onclick="sendMessage()">✈️</button>
+        </div>
+      </div>
+
+      <!-- Right sidebar -->
+      <div class="chat-sidebar">
+
+        <div class="chat-sidebar-section">
+          <div class="chat-sidebar-title">Language Distribution</div>
+          <div class="lang-bar-row">
+            <div class="lang-bar-item">
+              <div class="lang-bar-label">Hindi</div>
+              <div class="lang-bar-track">
+                <div class="lang-bar-fill fill-pink" style="width:62%;"></div>
+              </div>
+            </div>
+            <div class="lang-bar-item" style="margin-top:8px;">
+              <div class="lang-bar-label">Bhoj</div>
+              <div class="lang-bar-track">
+                <div class="lang-bar-fill fill-purple" style="width:38%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-sidebar-section">
+          <div class="chat-sidebar-title">Clinical Terms</div>
+          <div class="clinical-terms-list">
+            <div class="clinical-term-row">
+              <span class="ct-original">doodh mein dard</span>
+              <span class="ct-clinical">Chest pain / Angina</span>
+            </div>
+            <div class="clinical-term-row">
+              <span class="ct-original">chhati bhaari lagta</span>
+              <span class="ct-clinical">Chest heaviness / Tightness</span>
+            </div>
+            <div class="clinical-term-row">
+              <span class="ct-original">saans lene mein takleef</span>
+              <span class="ct-clinical">Dyspnea / Shortness of breath</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const val = input.value.trim();
+      if (!val) return;
+      const msgs = document.getElementById('chatMessages');
+      const userDiv = document.createElement('div');
+      userDiv.className = 'msg-user';
+      userDiv.textContent = val;
+      msgs.appendChild(userDiv);
+      input.value = '';
+      msgs.scrollTop = msgs.scrollHeight;
+      setTimeout(() => {
+        const aiDiv = document.createElement('div');
+        aiDiv.className = 'msg-sakhi';
+        aiDiv.innerHTML = '<span class="severity-pill pill-low" style="display:inline-block;border-radius:20px;padding:3px 14px;font-size:12px;font-weight:700;margin-bottom:10px;border:1.5px solid #166534;color:#166534;">Low Priority</span><br>Aapne jo bataya, usse lagta hai yeh aam taklif hai. Aaram karein, paani piyein, aur agar 2 din mein theek na ho to doctor se milein.';
+        msgs.appendChild(aiDiv);
+        msgs.scrollTop = msgs.scrollHeight;
+      }, 900);
+    }
+    document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+  </script>
+
+</body>
+
+</html>
