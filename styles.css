@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap");
 
-/* ── Variables ─────────────────────────────────────── */
+
 :root {
   --pink: #f472b6;
   --pink-light: #fadadd;
@@ -30,7 +30,7 @@
   --font-body: "Montserrat", sans-serif;
 }
 
-/* ── Reset ─────────────────────────────────────────── */
+
 *,
 *::before,
 *::after {
@@ -49,7 +49,7 @@ body {
   display: flex;
 }
 
-/* ── Sidebar ───────────────────────────────────────── */
+
 .sidebar {
   width: var(--sidebar-w);
   background: var(--purple);
@@ -94,7 +94,7 @@ body {
   font-weight: 600;
 }
 
-/* ── Main content ──────────────────────────────────── */
+
 .main {
   margin-left: var(--sidebar-w);
   flex: 1;
@@ -102,7 +102,7 @@ body {
   padding: 48px 52px;
 }
 
-/* ── Landing page (no sidebar) ─────────────────────── */
+
 body.landing {
   display: block;
   background: white;
@@ -185,7 +185,7 @@ body.landing {
   line-height: 1.9;
 }
 
-/* ── Page title block ──────────────────────────────── */
+
 .page-title {
   font-family: var(--font-head);
   font-size: 52px;
@@ -206,7 +206,7 @@ body.landing {
   font-family: var(--font-body);
 }
 
-/* ── Stat cards ────────────────────────────────────── */
+
 .stat-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -234,7 +234,7 @@ body.landing {
   letter-spacing: 0.04em;
 }
 
-/* ── Cards / panels ────────────────────────────────── */
+
 .card {
   background: white;
   border-radius: 16px;
@@ -250,7 +250,7 @@ body.landing {
   margin-bottom: 16px;
 }
 
-/* ── Section heading ───────────────────────────────── */
+
 .section-heading {
   font-family: var(--font-head);
   font-size: 20px;
@@ -260,7 +260,7 @@ body.landing {
   margin-top: 8px;
 }
 
-/* ── Heatmap / chart placeholders ─────────────────── */
+
 .heatmap-box {
   border: 1px solid var(--gray-200);
   border-radius: 14px;
@@ -294,7 +294,7 @@ body.landing {
   display: block;
 }
 
-/* ── Two-col chart row ─────────────────────────────── */
+
 .chart-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -318,7 +318,7 @@ body.landing {
   margin-bottom: 12px;
 }
 
-/* ── NER Scanner ───────────────────────────────────── */
+
 .ner-article {
   background: white;
   border: 1px solid var(--gray-200);
@@ -434,7 +434,7 @@ body.landing {
   color: var(--gray-800);
 }
 
-/* ── Health Chat ───────────────────────────────────── */
+
 .chat-layout {
   display: grid;
   grid-template-columns: 1fr 220px;
@@ -570,7 +570,7 @@ body.landing {
   font-size: 18px;
 }
 
-/* ── Chat sidebar ──────────────────────────────────── */
+
 .chat-sidebar {
   display: flex;
   flex-direction: column;
@@ -644,7 +644,7 @@ body.landing {
   line-height: 1.4;
 }
 
-/* ── Community ─────────────────────────────────────── */
+
 .community-header-main {
   display: flex;
   gap: 10px;
@@ -763,7 +763,7 @@ body.landing {
   z-index: 50;
 }
 
-/* ── Modal ─────────────────────────────────────────── */
+
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -889,7 +889,7 @@ body.landing {
   color: white;
 }
 
-/* ── Health Log ────────────────────────────────────── */
+
 .alert-banner {
   background: var(--red);
   color: white;
@@ -1000,7 +1000,7 @@ body.landing {
   float: right;
 }
 
-/* ── Symptoms ──────────────────────────────────────── */
+
 .symptoms-list {
   display: flex;
   flex-direction: column;
@@ -1021,7 +1021,7 @@ body.landing {
   margin-top: 10px;
 }
 
-/* ── Public Dashboard ──────────────────────────────── */
+
 .dashboard-center-title {
   text-align: center;
   font-family: var(--font-head);
@@ -1045,12 +1045,12 @@ body.landing {
   color: var(--pink);
 }
 
-/* ── SVG chart helpers ─────────────────────────────── */
+
 svg text {
   font-family: "Montserrat", sans-serif;
 }
 
-/* ── Scrollbar ─────────────────────────────────────── */
+
 ::-webkit-scrollbar {
   width: 6px;
 }
