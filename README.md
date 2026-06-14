@@ -111,24 +111,6 @@ Women in rural and underprivileged communities face critical barriers to healthc
 
 
 
-## Current State
-
-**MVP Complete** ✅
-- Health chat with multilingual support
-- Personal health logging & analytics
-- Symptom tracking & alerts
-- NER system for public health intelligence
-- Community forum with translation
-
-**Not Implemented (Out of Scope)**
-- User authentication & profiles
-- Mobile app (web-based only)
-- Offline support
-- Hospital/clinic integration
-- Real-time collaboration features
-
-
-
 ## What's Next for Sakhi
 
 🚀 **Phase 2: Scale & Integration**
