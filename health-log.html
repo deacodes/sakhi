@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sakhi – Health Log</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -32,7 +33,7 @@
     <p class="page-subtitle">A digital diary that helps women track symptoms, mood, and overall wellbeing over time.</p>
 
     <!-- Alert banner -->
-    <div class="alert-banner">
+    <div class="alert-banner" style="display:none;">
       <div class="alert-title">ALERT DETECTED</div>
       <div class="alert-sub">EARLY SIGNS OF ANAEMIA DETECTED</div>
     </div>
@@ -43,12 +44,12 @@
       <!-- Symptom Severity Distribution -->
       <div class="chart-box">
         <div class="chart-box-title">Symptom Severity Distribution</div>
-        CHART HERE
+        Loading...
       </div>
       <!-- Commonly Faced -->
       <div class="chart-box">
         <div class="chart-box-title">Commonly Faced</div>
-        CHART HERE
+        Loading...
       </div>
     </div>
 
@@ -68,25 +69,21 @@
       <div class="insightcards">
         <div class="insight-card">
           <div class="insight-text" style="font-weight:700;">
-            You've reported fatigue on 5 out of the last 7 days. Consider increasing iron-rich foods and staying
-            hydrated.
+            Loading...
           </div>
           <div class="insight-sub">
-            Pichhle 7 dinon mein 5 baar thakan darj ki gayi hai. Iron se bharpoor khana aur paryapt paani peena madad
-            kar sakta hai.
+            Loading...
           </div>
         </div>
         <div class="insight-card">
-          <div class="insight-text" style="font-weight:700;">Your mood has been lower this week. Would you like to talk
-            to someone?</div>
-          <div class="insight-sub">Aapka mood is hafte kam raha hai. Kya aap kisi se baat karna chahein</div>
+          <div class="insight-text" style="font-weight:700;">Loading...</div>
+          <div class="insight-sub">Loading...</div>
         </div>
       </div>
       <div class="insight-card-dark">
-        <p>The emotional health trend shows fluctuations, with a notable decline observed over the past week.</p>
+        <p>Click "AI Insight" to generate your insight.</p>
         <br>
-        <p>Initially the subject reported consistently positive moods, but recently has experienced more frequent
-          negative moods, particularly due to physical pain.</p>
+        <p></p>
         <button class="btn-ai-insight">AI INSIGHT</button>
         <div class="clearfix"></div>
       </div>
@@ -156,24 +153,7 @@
 
   </main>
 
-  <script>
-    function submitLog() {
-      const input = document.getElementById('logInput');
-      const val = input.value.trim();
-      if (!val) return;
-      const container = document.getElementById('loggedEntries');
-      const card = document.createElement('div');
-      card.className = 'insight-card';
-      card.style.marginBottom = '12px';
-      const date = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-      card.innerHTML = `<div style="font-size:11px;color:var(--gray-400);font-family:'Sora',sans-serif;font-weight:600;margin-bottom:6px;">${date}</div><div class="insight-text">${val}</div>`;
-      container.prepend(card);
-      input.value = '';
-    }
-    document.getElementById('logInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter' && e.ctrlKey) submitLog();
-    });
-  </script>
+  <script type="module" src="healthlog.js"></script>
 
 </body>
 
