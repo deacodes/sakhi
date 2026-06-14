@@ -109,28 +109,7 @@
     </div>
   </main>
 
-  <script>
-    function sendMessage() {
-      const input = document.getElementById('chatInput');
-      const val = input.value.trim();
-      if (!val) return;
-      const msgs = document.getElementById('chatMessages');
-      const userDiv = document.createElement('div');
-      userDiv.className = 'msg-user';
-      userDiv.textContent = val;
-      msgs.appendChild(userDiv);
-      input.value = '';
-      msgs.scrollTop = msgs.scrollHeight;
-      setTimeout(() => {
-        const aiDiv = document.createElement('div');
-        aiDiv.className = 'msg-sakhi';
-        aiDiv.innerHTML = '<span class="severity-pill pill-low" style="display:inline-block;border-radius:20px;padding:3px 14px;font-size:12px;font-weight:700;margin-bottom:10px;border:1.5px solid #166534;color:#166534;">Low Priority</span><br>Aapne jo bataya, usse lagta hai yeh aam taklif hai. Aaram karein, paani piyein, aur agar 2 din mein theek na ho to doctor se milein.';
-        msgs.appendChild(aiDiv);
-        msgs.scrollTop = msgs.scrollHeight;
-      }, 900);
-    }
-    document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
-  </script>
+  <script src="chat.js"></script>
 
 </body>
 
