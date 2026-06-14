@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getUserId } from './user.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCetu86df8EVlyhzBYlcOp1vRUjypQYZLk",
@@ -35,9 +36,7 @@ const clinicalMap = {
     'kamzori': 'Asthenia / Weakness',
     'dil ki dhadkan': 'Palpitations',
     'kamar dard': 'Lumbago / Back pain',
-    'pair dard': 'Leg pain',
-    'dard baa': 'Pain (Bhojpuri)',
-    'takleef baa': 'Discomfort (Bhojpuri)',
+    'pair dard': 'Leg pain'
 };
 
 function extractClinicalTerms(text) {
@@ -52,18 +51,28 @@ function extractClinicalTerms(text) {
 function detectLangs(text) {
     const hindiScript = (text.match(/[\u0900-\u097F]/g) || []).length;
     const englishWords = (text.match(/\b[a-zA-Z]+\b/g) || []).length;
+
+
+    if (hindiScript === 0) {
+        return [{ lang: 'English', pct: 100 }];
+    }
+
+
+    if (hindiScript > 0 && englishWords > 3) {
+        return [{ lang: 'Hinglish', pct: 100 }];
+    }
+
+
     const bhojpuriWords = ['baa', 'hau', 'hamaar', 'tohar', 'kahe', 'kehu', 'lagta', 'raha ba', 'kahi'];
     const isBhojpuri = bhojpuriWords.some(w => text.toLowerCase().includes(w));
 
-    const langs = [];
-    if (isBhojpuri) langs.push({ lang: 'Bhojpuri', pct: 45 });
-    if (hindiScript > 0) langs.push({ lang: 'Hindi', pct: 40 });
-    else if (!isBhojpuri && englishWords > 2) langs.push({ lang: 'Hinglish', pct: 50 });
-    if (englishWords > 0) langs.push({ lang: 'English', pct: 20 });
-    if (langs.length === 0) langs.push({ lang: 'English', pct: 100 });
+    if (isBhojpuri && hindiScript > 0) {
+        return [{ lang: 'Bhojpuri', pct: 100 }];
+    } else if (hindiScript > 0) {
+        return [{ lang: 'Hindi', pct: 100 }];
+    }
 
-    const total = langs.reduce((s, l) => s + l.pct, 0);
-    return langs.map(l => ({ ...l, pct: Math.round((l.pct / total) * 100) }));
+    return [{ lang: 'English', pct: 100 }];
 }
 
 function updateSidebar(langs, clinicalTerms) {
@@ -116,7 +125,7 @@ async function sendMessage() {
     msgs.appendChild(loadingDiv);
     msgs.scrollTop = msgs.scrollHeight;
 
-    // Run local NLP instantly
+
     const clinicalTerms = extractClinicalTerms(val);
     const langs = detectLangs(val);
     updateSidebar(langs, clinicalTerms);
@@ -133,7 +142,7 @@ async function sendMessage() {
                         role: 'system',
                         content: `You are Sakhi, a warm and caring women's health companion for rural Indian women.
 You understand Hindi, Bhojpuri, Hinglish, Urdu, Bengali, Tamil and code-mixed languages.
-Always respond in the same language the user wrote in.
+Always respond in the user's language.
 
 You must ALWAYS start your response with a JSON block on the very first line like this:
 {"severity":"low","category":"General","langs":[{"lang":"Hindi","pct":60},{"lang":"Bhojpuri","pct":40}]}
@@ -158,7 +167,7 @@ Give helpful advice. Please take their health seriously too as you are a medical
             return;
         }
 
-        // Parse JSON from first line
+
         const lines = fullText.split('\n');
         let meta = { severity: 'low', category: 'General', langs };
         try {
@@ -167,7 +176,7 @@ Give helpful advice. Please take their health seriously too as you are a medical
 
         const cleanText = lines.slice(1).join('\n').trim();
 
-        // Update sidebar with model's language detection
+
         if (meta.langs && meta.langs.length > 0) {
             updateSidebar(meta.langs, clinicalTerms);
         }
@@ -185,16 +194,16 @@ Give helpful advice. Please take their health seriously too as you are a medical
       <br><br>${cleanText.replace(/\n/g, '<br>')}
     `;
 
-        // ✅ Save to Firestore AFTER meta is defined
+
         const symptomCategories = ['Symptoms', 'Emergency', 'Periods', 'Pregnancy'];
-        if (symptomCategories.includes(meta.category)) {
-            await addDoc(collection(db, 'symptoms'), {
-                text: val,
-                severity: meta.severity,
-                category: meta.category,
-                timestamp: Date.now()
-            });
-        }
+
+        await addDoc(collection(db, 'symptoms'), {
+            text: val,
+            severity: meta.severity,
+            category: meta.category,
+            timestamp: Date.now(),
+            userId: getUserId()
+        });
 
     } catch (err) {
         console.error(err);
