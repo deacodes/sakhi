@@ -1,6 +1,20 @@
-const FEATHERLESS_API_KEY = 'rc_06f25a3615af02e085b2eb6617d6131332ef42185df4bb6b23ccec08fe4ec541';
-const MODEL = 'mistralai/Mistral-7B-Instruct-v0.3';
-// Clinical Terms Dictionary
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCetu86df8EVlyhzBYlcOp1vRUjypQYZLk",
+    authDomain: "sakhi-84ea1.firebaseapp.com",
+    projectId: "sakhi-84ea1",
+    storageBucket: "sakhi-84ea1.firebasestorage.app",
+    messagingSenderId: "737146576086",
+    appId: "1:737146576086:web:4c4328110a8a042f11fd77"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const MODEL = 'meta-llama/Meta-Llama-3.1-8B-Instruct';
+
 const clinicalMap = {
     'pet dard': 'Abdominal pain',
     'chhati dard': 'Chest pain / Angina',
@@ -22,7 +36,6 @@ const clinicalMap = {
     'dil ki dhadkan': 'Palpitations',
     'kamar dard': 'Lumbago / Back pain',
     'pair dard': 'Leg pain',
-    'baap re': 'Exclamation of pain',
     'dard baa': 'Pain (Bhojpuri)',
     'takleef baa': 'Discomfort (Bhojpuri)',
 };
@@ -111,9 +124,7 @@ async function sendMessage() {
     try {
         const response = await fetch('https://sakhi.deaplayz2011.workers.dev', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 model: MODEL,
                 max_tokens: 1000,
@@ -122,7 +133,7 @@ async function sendMessage() {
                         role: 'system',
                         content: `You are Sakhi, a warm and caring women's health companion for rural Indian women.
 You understand Hindi, Bhojpuri, Hinglish, Urdu, Bengali, Tamil and code-mixed languages.
-Always respond in the same language the user wrote in. and provide medical advice for the time being to help
+Always respond in the same language the user wrote in.
 
 You must ALWAYS start your response with a JSON block on the very first line like this:
 {"severity":"low","category":"General","langs":[{"lang":"Hindi","pct":60},{"lang":"Bhojpuri","pct":40}]}
@@ -131,18 +142,16 @@ Severity options: low, see-doctor, urgent
 Category options: Symptoms, Periods, Pregnancy, Mental Health, Nutrition, Medications, Emergency, General
 
 Then on the next line, write your warm empathetic response.
-Never diagnose. Always suggest seeing a doctor for serious symptoms.`
+Give helpful advice. Please take their health seriously too as you are a medical assistant but you have to be caring and warm`
                     },
-                    {
-                        role: 'user',
-                        content: val
-                    }
+                    { role: 'user', content: val }
                 ]
             })
         });
 
         const data = await response.json();
         console.log('API response:', JSON.stringify(data));
+
         const fullText = data?.choices?.[0]?.message?.content;
         if (!fullText) {
             loadingDiv.innerHTML = 'No response received. Check console.';
@@ -158,7 +167,7 @@ Never diagnose. Always suggest seeing a doctor for serious symptoms.`
 
         const cleanText = lines.slice(1).join('\n').trim();
 
-        // Update sidebar with Llama's language detection
+        // Update sidebar with model's language detection
         if (meta.langs && meta.langs.length > 0) {
             updateSidebar(meta.langs, clinicalTerms);
         }
@@ -176,6 +185,17 @@ Never diagnose. Always suggest seeing a doctor for serious symptoms.`
       <br><br>${cleanText.replace(/\n/g, '<br>')}
     `;
 
+        // ✅ Save to Firestore AFTER meta is defined
+        const symptomCategories = ['Symptoms', 'Emergency', 'Periods', 'Pregnancy'];
+        if (symptomCategories.includes(meta.category)) {
+            await addDoc(collection(db, 'symptoms'), {
+                text: val,
+                severity: meta.severity,
+                category: meta.category,
+                timestamp: Date.now()
+            });
+        }
+
     } catch (err) {
         console.error(err);
         loadingDiv.innerHTML = 'Something went wrong. Please try again.';
@@ -188,4 +208,4 @@ document.getElementById('chatInput').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
 });
 
-window.sendMessage = sendMessage;
+document.getElementById('sendBtn').addEventListener('click', sendMessage);
