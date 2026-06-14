@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getUserId } from './user.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCetu86df8EVlyhzBYlcOp1vRUjypQYZLk",
@@ -16,7 +17,7 @@ const db = getFirestore(app);
 document.addEventListener('DOMContentLoaded', async () => {
     await Promise.all([loadLoggedEntries(), loadCharts(), loadWeeklyInsights()]);
     await checkForAlert();
-    // AI Insight button
+
     document.querySelector('.btn-ai-insight').addEventListener('click', async () => {
         const btn = document.querySelector('.btn-ai-insight');
         const darkCard = document.querySelector('.insight-card-dark');
@@ -24,7 +25,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-            const snapshot = await getDocs(collection(db, 'healthlogs'));
+            const q = query(
+                collection(db, 'healthlogs'),
+                where('userId', '==', getUserId())
+            );
+            const snapshot = await getDocs(q);
             const recentLogs = [];
             snapshot.forEach(doc => {
                 const d = doc.data();
@@ -54,7 +59,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await response.json();
             const insight = data?.choices?.[0]?.message?.content?.trim();
 
-            // Update dark card text
             const paras = darkCard.querySelectorAll('p');
             if (paras.length >= 1) paras[0].textContent = insight || 'Unable to generate insight.';
             if (paras.length >= 2) paras[1].textContent = '';
@@ -73,7 +77,12 @@ window.submitLog = async function () {
     if (!val) return;
 
     const date = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-    await addDoc(collection(db, 'healthlogs'), { text: val, date, timestamp: Date.now() });
+    await addDoc(collection(db, 'healthlogs'), {
+        text: val,
+        date,
+        timestamp: Date.now(),
+        userId: getUserId()
+    });
     prependLogCard(val, date);
     input.value = '';
     await loadWeeklyInsights();
@@ -98,7 +107,11 @@ function prependLogCard(text, date) {
 async function loadLoggedEntries() {
     const container = document.getElementById('loggedEntries');
     try {
-        const q = query(collection(db, 'healthlogs'), orderBy('timestamp', 'desc'));
+        const q = query(
+            collection(db, 'healthlogs'),
+            where('userId', '==', getUserId()),
+            orderBy('timestamp', 'desc')
+        );
         const snapshot = await getDocs(q);
         if (snapshot.empty) return;
         container.innerHTML = '';
@@ -120,7 +133,11 @@ async function loadLoggedEntries() {
 
 async function loadCharts() {
     try {
-        const snapshot = await getDocs(collection(db, 'symptoms'));
+        const q = query(
+            collection(db, 'symptoms'),
+            where('userId', '==', getUserId())
+        );
+        const snapshot = await getDocs(q);
         const severityCounts = { low: 0, 'see-doctor': 0, urgent: 0 };
         const categoryCounts = {};
 
@@ -130,7 +147,6 @@ async function loadCharts() {
             if (s.category) categoryCounts[s.category] = (categoryCounts[s.category] || 0) + 1;
         });
 
-        // Severity donut — small and fixed size
         const severityBox = document.querySelectorAll('.chart-box')[0];
         severityBox.innerHTML = `
       <div class="chart-box-title">Symptom Severity Distribution</div>
@@ -161,7 +177,6 @@ async function loadCharts() {
             }
         });
 
-        // Category bar chart — small and fixed
         const categoryBox = document.querySelectorAll('.chart-box')[1];
         categoryBox.innerHTML = `
       <div class="chart-box-title">Commonly Faced</div>
@@ -207,7 +222,11 @@ async function loadCharts() {
 async function loadWeeklyInsights() {
     try {
         const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-        const snapshot = await getDocs(collection(db, 'healthlogs'));
+        const q = query(
+            collection(db, 'healthlogs'),
+            where('userId', '==', getUserId())
+        );
+        const snapshot = await getDocs(q);
         const recentLogs = [];
         snapshot.forEach(doc => {
             const d = doc.data();
@@ -271,13 +290,18 @@ async function loadWeeklyInsights() {
         console.error('Error loading insights:', err);
     }
 }
+
 async function checkForAlert() {
     const alertBanner = document.querySelector('.alert-banner');
-    alertBanner.style.display = 'none'; // hide by default
+    alertBanner.style.display = 'none';
 
     try {
         const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-        const snapshot = await getDocs(collection(db, 'symptoms'));
+        const q = query(
+            collection(db, 'symptoms'),
+            where('userId', '==', getUserId())
+        );
+        const snapshot = await getDocs(q);
 
         const recentSymptoms = [];
         snapshot.forEach(doc => {
@@ -287,13 +311,9 @@ async function checkForAlert() {
 
         if (recentSymptoms.length === 0) return;
 
-        // Count urgent/see-doctor in last 7 days
         const urgentCount = recentSymptoms.filter(s => s.severity === 'urgent').length;
-        const seeDoctorCount = recentSymptoms.filter(s => s.severity === 'see-doctor').length;
 
-        // Show alert if 2+ urgent OR 4+ see-doctor in last week
-        if (urgentCount >= 1 || seeDoctorCount >= 4) {
-            // Ask Mistral what the alert should say
+        if (urgentCount >= 1) {
             const response = await fetch('https://sakhi.deaplayz2011.workers.dev', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
