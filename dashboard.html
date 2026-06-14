@@ -13,7 +13,7 @@
 
 <body>
 
-  <!-- Sidebar -->
+
   <aside class="sidebar">
     <div class="sidebar-logo"><a href="index.html" style="color: white; text-decoration: none;">Sakhi</a></div>
     <nav class="sidebar-nav">
@@ -25,7 +25,7 @@
     </nav>
   </aside>
 
-  <!-- Main -->
+
   <main class="main">
 
     <div class="dashboard-center-title">Public Dashboard</div>
@@ -34,7 +34,7 @@
       Designed for journalists, NGOs, and government health officials.
     </div>
 
-    <!-- Stats row -->
+
     <div class="stat-row">
       <div class="stat-card dash-stat-card">
         <div class="num">2.4M</div>
@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <!-- India Health Heatmap -->
+
     <div class="section-heading">India Health Heatmap</div>
     <div class="heatmap-box">
       <div class="heatmap-tabs">
@@ -68,10 +68,10 @@
       <div id="map" style="height:380px;width:100%;border-radius:12px;margin-top:10px;z-index:0;"></div>
     </div>
 
-    <!-- Charts row -->
+
     <div class="chart-row" style="margin-top:24px;">
 
-      <!-- Anaemia by Age -->
+
       <div class="chart-box">
         <div style="font-weight:700;font-size:15px;font-family:'Sora',sans-serif;color:var(--navy);margin-bottom:4px;">
           Anaemia Prevalence by Age Group</div>
@@ -80,7 +80,7 @@
         <div style="height:180px;"><canvas id="anaemiaChart"></canvas></div>
       </div>
 
-      <!-- Maternal Health Radar -->
+
       <div class="chart-box">
         <div style="font-weight:700;font-size:15px;font-family:'Sora',sans-serif;color:var(--navy);margin-bottom:4px;">
           Maternal Health Indicators</div>
@@ -91,10 +91,10 @@
 
     </div>
 
-    <!-- Second charts row -->
+
     <div class="chart-row" style="margin-top:16px;">
 
-      <!-- Top Symptoms Over Time -->
+
       <div class="chart-box">
         <div style="font-weight:700;font-size:15px;font-family:'Sora',sans-serif;color:var(--navy);margin-bottom:4px;">
           Top Symptoms Over Time</div>
@@ -103,7 +103,7 @@
         <div style="height:180px;"><canvas id="symptomsChart"></canvas></div>
       </div>
 
-      <!-- Supply Request Volume -->
+
       <div class="chart-box">
         <div style="font-weight:700;font-size:15px;font-family:'Sora',sans-serif;color:var(--navy);margin-bottom:4px;">
           Supply Request Volume</div>
@@ -114,7 +114,7 @@
 
     </div>
 
-    <!-- NER Scanner -->
+
     <div class="section-heading" style="margin-top:24px;">NER Health Scanner</div>
 
     <div class="ner-article">
@@ -145,7 +145,7 @@
       <div class="ner-result-box" style="display:none;margin-top:12px;"></div>
     </div>
 
-    <!-- NER input -->
+
     <div class="ner-input-row">
       <input class="ner-input" id="nerInput" placeholder="Paste any health article..." />
       <button class="btn-ner" style="padding:12px 22px;border-radius:10px;" onclick="runNER()">Run NER →</button>
@@ -157,7 +157,7 @@
   </main>
 
   <script>
-    // ── Heatmap ───────────────────────────────────────────────
+
     const map = L.map('map', { zoomControl: true, scrollWheelZoom: false }).setView([22.5, 82.5], 5);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -232,10 +232,10 @@
       renderBubbles(type);
     };
 
-    // ── Charts ────────────────────────────────────────────────
+
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 
-    // Anaemia by Age
+
     new Chart(document.getElementById('anaemiaChart'), {
       type: 'bar',
       data: {
@@ -256,7 +256,7 @@
       }
     });
 
-    // Maternal Health Radar
+
     new Chart(document.getElementById('maternalChart'), {
       type: 'radar',
       data: {
@@ -293,7 +293,7 @@
       }
     });
 
-    // Top Symptoms Over Time
+
     new Chart(document.getElementById('symptomsChart'), {
       type: 'line',
       data: {
@@ -339,7 +339,7 @@
       }
     });
 
-    // ── NER ───────────────────────────────────────────────────
+
     async function callNER(text, resultBox) {
       resultBox.style.display = 'block';
       resultBox.innerHTML = '<div style="color:#aaa;font-size:13px;padding:12px;">Extracting entities...</div>';
