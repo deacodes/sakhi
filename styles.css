@@ -643,6 +643,17 @@ body.landing {
 }
 
 /* ── Community ─────────────────────────────────────── */
+.community-header-main {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+.community-date {
+  font-weight: 500;
+  color: var(--gray-600);
+  font-size: small;
+}
 .community-list {
   display: flex;
   flex-direction: column;
