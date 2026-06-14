@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sakhi – Public Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -25,7 +28,6 @@
   <!-- Main -->
   <main class="main">
 
-    <!-- Title -->
     <div class="dashboard-center-title">Public Dashboard</div>
     <div class="dashboard-center-sub">
       Real-time anonymised health data from women across India.<br>
@@ -35,19 +37,19 @@
     <!-- Stats row -->
     <div class="stat-row">
       <div class="stat-card dash-stat-card">
-        <div class="num">12000</div>
+        <div class="num">2.4M</div>
         <div class="label">Women Reached</div>
       </div>
       <div class="stat-card dash-stat-card">
-        <div class="num">89</div>
-        <div class="label">Alerts</div>
+        <div class="num">57%</div>
+        <div class="label">Anaemia Prevalence</div>
       </div>
       <div class="stat-card dash-stat-card">
-        <div class="num">12000</div>
-        <div class="label">Supplies</div>
+        <div class="num">1 in 3</div>
+        <div class="label">Skips Antenatal Care</div>
       </div>
       <div class="stat-card dash-stat-card">
-        <div class="num pink" style="color:var(--pink);">Fever</div>
+        <div class="num pink" style="color:var(--pink);">Fatigue</div>
         <div class="label">Top Symptom</div>
       </div>
     </div>
@@ -56,107 +58,360 @@
     <div class="section-heading">India Health Heatmap</div>
     <div class="heatmap-box">
       <div class="heatmap-tabs">
-        <button class="heatmap-tab">Symptom Burden</button>
-        <button class="heatmap-tab outline">Supply Demand</button>
-        <button class="heatmap-tab outline">SOS Frequency</button>
+        <button class="heatmap-tab active-tab" onclick="switchTab(this, 'symptom')">Symptom Burden</button>
+        <button class="heatmap-tab outline" onclick="switchTab(this, 'supply')">Supply Demand</button>
+        <button class="heatmap-tab outline" onclick="switchTab(this, 'sos')">SOS Frequency</button>
       </div>
-      <!-- SVG India map with bubbles -->
-      <div style="padding:16px 20px 20px;">
-        CHART HERE
+      <div style="font-size:11px;color:#aaa;font-family:'Montserrat',sans-serif;padding:6px 20px 0;">
+        Bubble size = relative burden. Data: NFHS-5 / WHO 2023 estimates.
       </div>
+      <div id="map" style="height:380px;width:100%;border-radius:12px;margin-top:10px;z-index:0;"></div>
     </div>
 
     <!-- Charts row -->
-    <div class="chart-row">
+    <div class="chart-row" style="margin-top:24px;">
+
+      <!-- Anaemia by Age -->
+      <div class="chart-box">
+        <div style="font-weight:700;font-size:15px;font-family:'Sora',sans-serif;color:var(--navy);margin-bottom:4px;">
+          Anaemia Prevalence by Age Group</div>
+        <div style="font-size:12px;color:var(--gray-400);margin-bottom:16px;">% of women affected · Source: NFHS-5
+          (2019–21)</div>
+        <div style="height:180px;"><canvas id="anaemiaChart"></canvas></div>
+      </div>
+
+      <!-- Maternal Health Radar -->
+      <div class="chart-box">
+        <div style="font-weight:700;font-size:15px;font-family:'Sora',sans-serif;color:var(--navy);margin-bottom:4px;">
+          Maternal Health Indicators</div>
+        <div style="font-size:12px;color:var(--gray-400);margin-bottom:16px;">% coverage · Rural India vs Target ·
+          Source: WHO/HMIS 2023</div>
+        <div style="height:180px;"><canvas id="maternalChart"></canvas></div>
+      </div>
+
+    </div>
+
+    <!-- Second charts row -->
+    <div class="chart-row" style="margin-top:16px;">
+
       <!-- Top Symptoms Over Time -->
       <div class="chart-box">
-        CHART HERE
+        <div style="font-weight:700;font-size:15px;font-family:'Sora',sans-serif;color:var(--navy);margin-bottom:4px;">
+          Top Symptoms Over Time</div>
+        <div style="font-size:12px;color:var(--gray-400);margin-bottom:16px;">Most reported across districts · Jan–Jun
+          2026</div>
+        <div style="height:180px;"><canvas id="symptomsChart"></canvas></div>
       </div>
-      <!-- Something else -->
+
+      <!-- Supply Request Volume -->
       <div class="chart-box">
-        CHART HERE
+        <div style="font-weight:700;font-size:15px;font-family:'Sora',sans-serif;color:var(--navy);margin-bottom:4px;">
+          Supply Request Volume</div>
+        <div style="font-size:12px;color:var(--gray-400);margin-bottom:16px;">Monthly supply requests by category · 2026
+        </div>
+        <div style="height:180px;"><canvas id="supplyChart"></canvas></div>
       </div>
+
     </div>
 
     <!-- NER Scanner -->
+    <div class="section-heading" style="margin-top:24px;">NER Health Scanner</div>
+
     <div class="ner-article">
       <div class="ner-article-title">Government Launches Anaemia Screening Drive in Rural Rajasthan</div>
-      <div class="ner-article-text">
-        The Health Department of Rajasthan has launched a large-scale anaemia screening campaign across rural districts
-        including Jaipur, Alwar, and Dausa. Health workers will conduct haemoglobin tests for women and adolescent girls
-        and distribute iron-folic acid supplements through local health centres.
+      <div class="ner-article-text">The Health Department of Rajasthan has launched a large-scale anaemia screening
+        campaign across rural districts including Jaipur, Alwar, and Dausa. Health workers will conduct haemoglobin
+        tests for women and adolescent girls and distribute iron-folic acid supplements through local health centres.
       </div>
-      <button class="btn-ner">Run NER →</button>
+      <button class="btn-ner" onclick="runNERon(this)">Run NER →</button>
+      <div class="ner-result-box" style="display:none;margin-top:12px;"></div>
     </div>
 
     <div class="ner-article">
       <div class="ner-article-title">WHO Report Highlights Rising Concerns Around Maternal Health</div>
-      <div class="ner-article-text">
-        A recent report released by the World Health Organization highlighted persistent challenges in maternal
-        healthcare access across South Asia. Experts from New Delhi and Mumbai emphasized the importance of regular
-        prenatal checkups, nutritional support, and community awareness programs.
-      </div>
-      <button class="btn-ner">Run NER →</button>
+      <div class="ner-article-text">A recent report released by the World Health Organization highlighted persistent
+        challenges in maternal healthcare access across South Asia. Experts from New Delhi and Mumbai emphasized the
+        importance of regular prenatal checkups, nutritional support, and community awareness programs.</div>
+      <button class="btn-ner" onclick="runNERon(this)">Run NER →</button>
+      <div class="ner-result-box" style="display:none;margin-top:12px;"></div>
     </div>
 
     <div class="ner-article">
       <div class="ner-article-title">New Nutrition Initiative Targets Iron Deficiency Among Teenagers</div>
-      <div class="ner-article-text">
-        The Ministry of Health announced a nutrition initiative in collaboration with UNICEF to address iron deficiency
-        among teenage girls. The program will begin in Uttar Pradesh, Bihar, and Madhya Pradesh and include school-based
-        awareness campaigns and free supplement distribution.
-      </div>
-      <button class="btn-ner">Run NER →</button>
+      <div class="ner-article-text">The Ministry of Health announced a nutrition initiative in collaboration with UNICEF
+        to address iron deficiency among teenage girls. The program will begin in Uttar Pradesh, Bihar, and Madhya
+        Pradesh and include school-based awareness campaigns and free supplement distribution.</div>
+      <button class="btn-ner" onclick="runNERon(this)">Run NER →</button>
+      <div class="ner-result-box" style="display:none;margin-top:12px;"></div>
     </div>
 
     <!-- NER input -->
     <div class="ner-input-row">
-      <input class="ner-input" id="nerInput" placeholder="Enter Article" />
+      <input class="ner-input" id="nerInput" placeholder="Paste any health article..." />
       <button class="btn-ner" style="padding:12px 22px;border-radius:10px;" onclick="runNER()">Run NER →</button>
     </div>
 
-    <!-- NER result -->
-    <div class="ner-result-box" id="nerResult">
-      <div class="ner-result-header">
-        <span class="ner-result-title">Extracted Entities</span>
-        <span class="severity-badge">Severity: medium</span>
-      </div>
-      <div class="ner-summary">The health bulletin reports surveillance activities for Kala-azar in Vaishali and
-        Muzaffarpur, with new PKDl cases identified and training for ASHA workers completed</div>
-      <div class="ner-entities">
-        <div class="ner-entity-group">
-          <label>🔴 Diseases (2)</label>
-          <span class="ner-tag disease">Kala-azar</span>
-          <span class="ner-tag disease">PKDL</span>
-        </div>
-        <div class="ner-entity-group">
-          <label>📍 Locations (2)</label>
-          <span class="ner-tag location">Vaishali</span>
-          <span class="ner-tag location">Muzaffarpur</span>
-        </div>
-        <div class="ner-entity-group">
-          <label>📊 Data Points</label>
-          <span class="ner-tag data">5 new PKDL cases identified</span>
-        </div>
-      </div>
-    </div>
+    <div class="ner-result-box" id="nerResult" style="display:none;"></div>
 
     <div style="height:40px;"></div>
   </main>
 
   <script>
-    document.querySelectorAll('.heatmap-tab').forEach(tab => {
-      tab.addEventListener('click', function () {
-        document.querySelectorAll('.heatmap-tab').forEach(t => t.classList.add('outline'));
-        this.classList.remove('outline');
+    // ── Heatmap ───────────────────────────────────────────────
+    const map = L.map('map', { zoomControl: true, scrollWheelZoom: false }).setView([22.5, 82.5], 5);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© CARTO',
+      subdomains: 'abcd',
+      maxZoom: 8
+    }).addTo(map);
+
+    const stateData = {
+      symptom: [
+        { name: 'Uttar Pradesh', lat: 26.8, lng: 80.9, value: 3240, top: 'Anaemia, Fatigue' },
+        { name: 'Bihar', lat: 25.9, lng: 85.1, value: 2890, top: 'Anaemia, Fever' },
+        { name: 'Rajasthan', lat: 27.0, lng: 74.2, value: 2100, top: 'Fatigue, Dehydration' },
+        { name: 'Madhya Pradesh', lat: 22.9, lng: 78.6, value: 1980, top: 'Anaemia, Malnutrition' },
+        { name: 'Maharashtra', lat: 19.7, lng: 75.7, value: 1750, top: 'Stress, Period Pain' },
+        { name: 'West Bengal', lat: 22.9, lng: 87.8, value: 1600, top: 'Fever, Anaemia' },
+        { name: 'Odisha', lat: 20.9, lng: 84.2, value: 1400, top: 'Malaria, Anaemia' },
+        { name: 'Jharkhand', lat: 23.6, lng: 85.2, value: 1200, top: 'Anaemia, Fatigue' },
+        { name: 'Gujarat', lat: 22.2, lng: 71.1, value: 980, top: 'Fatigue, Nausea' },
+        { name: 'Karnataka', lat: 15.3, lng: 75.7, value: 870, top: 'Stress, Headache' },
+      ],
+      supply: [
+        { name: 'Uttar Pradesh', lat: 26.8, lng: 80.9, value: 1890, top: 'Iron tablets, ORS' },
+        { name: 'Bihar', lat: 25.9, lng: 85.1, value: 1650, top: 'Iron tablets, Vitamins' },
+        { name: 'Rajasthan', lat: 27.0, lng: 74.2, value: 1200, top: 'ORS, Pads' },
+        { name: 'Madhya Pradesh', lat: 22.9, lng: 78.6, value: 1100, top: 'Iron, Folic Acid' },
+        { name: 'Maharashtra', lat: 19.7, lng: 75.7, value: 900, top: 'Contraceptives, Iron' },
+        { name: 'West Bengal', lat: 22.9, lng: 87.8, value: 850, top: 'ORS, Vitamins' },
+        { name: 'Odisha', lat: 20.9, lng: 84.2, value: 780, top: 'Malaria kits, Iron' },
+        { name: 'Jharkhand', lat: 23.6, lng: 85.2, value: 700, top: 'Iron tablets, Pads' },
+      ],
+      sos: [
+        { name: 'Uttar Pradesh', lat: 26.8, lng: 80.9, value: 340, top: 'Pregnancy complications' },
+        { name: 'Bihar', lat: 25.9, lng: 85.1, value: 290, top: 'Severe anaemia' },
+        { name: 'Rajasthan', lat: 27.0, lng: 74.2, value: 210, top: 'Maternal emergency' },
+        { name: 'Madhya Pradesh', lat: 22.9, lng: 78.6, value: 198, top: 'High fever' },
+        { name: 'Maharashtra', lat: 19.7, lng: 75.7, value: 175, top: 'Chest pain' },
+        { name: 'West Bengal', lat: 22.9, lng: 87.8, value: 160, top: 'Pregnancy complications' },
+      ]
+    };
+
+    let currentLayer = L.layerGroup().addTo(map);
+
+    function renderBubbles(type) {
+      currentLayer.clearLayers();
+      const data = stateData[type];
+      const max = Math.max(...data.map(d => d.value));
+
+      data.forEach(d => {
+        const radius = 20 + (d.value / max) * 40;
+        const circle = L.circleMarker([d.lat, d.lng], {
+          radius,
+          fillColor: '#a78bfa',
+          fillOpacity: 0.5,
+          color: '#7c3aed',
+          weight: 1.5
+        }).addTo(currentLayer);
+
+        circle.bindPopup(`
+          <b style="font-family:Sora,sans-serif;">${d.name}</b><br>
+          <span style="font-size:12px;">Reports: <b>${d.value.toLocaleString()}</b></span><br>
+          <span style="font-size:12px;color:#888;">${d.top}</span>
+        `);
       });
+    }
+
+    renderBubbles('symptom');
+
+    window.switchTab = function (btn, type) {
+      document.querySelectorAll('.heatmap-tab').forEach(t => t.classList.add('outline'));
+      btn.classList.remove('outline');
+      renderBubbles(type);
+    };
+
+    // ── Charts ────────────────────────────────────────────────
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+    // Anaemia by Age
+    new Chart(document.getElementById('anaemiaChart'), {
+      type: 'bar',
+      data: {
+        labels: ['15–19 yrs', '20–29 yrs', '30–39 yrs', '40–49 yrs', 'Pregnant'],
+        datasets: [{
+          data: [59.1, 53.2, 48.7, 44.3, 52.2],
+          backgroundColor: ['#f472b6', '#a78bfa', '#60a5fa', '#34d399', '#fbbf24'],
+          borderRadius: 8, borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%', font: { size: 10 } }, grid: { color: '#f0f0f0' } },
+          x: { ticks: { font: { size: 10 } }, grid: { display: false } }
+        }
+      }
     });
 
-    function runNER() {
-      const input = document.getElementById('nerInput').value.trim();
-      if (!input) return;
-      document.getElementById('nerResult').scrollIntoView({ behavior: 'smooth' });
+    // Maternal Health Radar
+    new Chart(document.getElementById('maternalChart'), {
+      type: 'radar',
+      data: {
+        labels: ['Antenatal Care', 'Institutional Birth', 'Postnatal Care', 'Iron Supplement', 'Skilled Attendant', 'Breastfeeding'],
+        datasets: [
+          {
+            label: 'Rural India',
+            data: [62, 77, 48, 58, 74, 63],
+            backgroundColor: 'rgba(244,114,182,0.15)',
+            borderColor: '#f472b6', borderWidth: 2,
+            pointBackgroundColor: '#f472b6', pointRadius: 3
+          },
+          {
+            label: 'National Target',
+            data: [90, 90, 85, 90, 90, 80],
+            backgroundColor: 'rgba(167,139,250,0.1)',
+            borderColor: '#a78bfa', borderWidth: 2,
+            borderDash: [5, 5],
+            pointBackgroundColor: '#a78bfa', pointRadius: 3
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 10, padding: 8 } } },
+        scales: {
+          r: {
+            beginAtZero: true, max: 100,
+            ticks: { callback: v => v + '%', font: { size: 9 }, stepSize: 25 },
+            grid: { color: '#f0f0f0' },
+            pointLabels: { font: { size: 10 } }
+          }
+        }
+      }
+    });
+
+    // Top Symptoms Over Time
+    new Chart(document.getElementById('symptomsChart'), {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [
+          { label: 'Fatigue', data: [310, 340, 380, 410, 430, 460], borderColor: '#f472b6', backgroundColor: 'transparent', tension: 0.4, pointRadius: 3 },
+          { label: 'Anaemia', data: [280, 300, 320, 350, 370, 390], borderColor: '#a78bfa', backgroundColor: 'transparent', tension: 0.4, pointRadius: 3 },
+          { label: 'Headache', data: [200, 210, 230, 220, 240, 250], borderColor: '#fbbf24', backgroundColor: 'transparent', tension: 0.4, pointRadius: 3 },
+          { label: 'Nausea', data: [160, 170, 180, 175, 185, 190], borderColor: '#34d399', backgroundColor: 'transparent', tension: 0.4, pointRadius: 3 },
+          { label: 'Fever', data: [140, 130, 150, 160, 145, 155], borderColor: '#60a5fa', backgroundColor: 'transparent', tension: 0.4, pointRadius: 3 },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 10, padding: 8 } } },
+        scales: {
+          y: { beginAtZero: true, ticks: { font: { size: 10 } }, grid: { color: '#f0f0f0' } },
+          x: { ticks: { font: { size: 10 } }, grid: { display: false } }
+        }
+      }
+    });
+
+    // Supply Request Volume
+    new Chart(document.getElementById('supplyChart'), {
+      type: 'bar',
+      data: {
+        labels: months,
+        datasets: [
+          { label: 'Pads', data: [420, 510, 480, 540, 600, 580], backgroundColor: '#a78bfa', borderRadius: 4, borderWidth: 0 },
+          { label: 'Iron', data: [260, 290, 310, 360, 380, 400], backgroundColor: '#f472b6', borderRadius: 4, borderWidth: 0 },
+          { label: 'ORS', data: [180, 200, 190, 230, 250, 240], backgroundColor: '#34d399', borderRadius: 4, borderWidth: 0 },
+          { label: 'Vitamins', data: [100, 120, 130, 140, 150, 160], backgroundColor: '#fbbf24', borderRadius: 4, borderWidth: 0 },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 10, padding: 8 } } },
+        scales: {
+          y: { beginAtZero: true, ticks: { font: { size: 10 } }, grid: { color: '#f0f0f0' } },
+          x: { ticks: { font: { size: 10 } }, grid: { display: false } },
+          x: { stacked: false, ticks: { font: { size: 10 } }, grid: { display: false } }
+        }
+      }
+    });
+
+    // ── NER ───────────────────────────────────────────────────
+    async function callNER(text, resultBox) {
+      resultBox.style.display = 'block';
+      resultBox.innerHTML = '<div style="color:#aaa;font-size:13px;padding:12px;">Extracting entities...</div>';
+
+      const response = await fetch('https://sakhi.deaplayz2011.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'mistralai/Mistral-7B-Instruct-v0.3',
+          max_tokens: 500,
+          messages: [
+            {
+              role: 'system',
+              content: `You are a medical NER system. Extract entities from the health article and return ONLY this JSON, nothing else:
+{
+  "severity": "low|medium|high",
+  "summary": "one sentence summary",
+  "diseases": ["disease1", "disease2"],
+  "locations": ["location1", "location2"],
+  "organizations": ["org1", "org2"],
+  "datapoints": ["key stat or fact"]
+}`
+            },
+            { role: 'user', content: text }
+          ]
+        })
+      });
+
+      const data = await response.json();
+      const raw = data?.choices?.[0]?.message?.content?.trim();
+
+      let parsed;
+      try {
+        const match = raw.match(/\{[\s\S]*\}/);
+        parsed = JSON.parse(match[0]);
+      } catch (e) {
+        resultBox.innerHTML = '<div style="color:red;padding:12px;">Could not parse response.</div>';
+        return;
+      }
+
+      const severityColor = { low: '#34d399', medium: '#fbbf24', high: '#f87171' }[parsed.severity] || '#aaa';
+
+      resultBox.innerHTML = `
+        <div class="ner-result-header">
+          <span class="ner-result-title">Extracted Entities</span>
+          <span class="severity-badge" style="color:${severityColor};">Severity: ${parsed.severity}</span>
+        </div>
+        <div class="ner-summary">${parsed.summary}</div>
+        <div class="ner-entities">
+          ${parsed.diseases?.length ? `<div class="ner-entity-group"><label>🔴 Diseases (${parsed.diseases.length})</label>${parsed.diseases.map(d => `<span class="ner-tag disease">${d}</span>`).join('')}</div>` : ''}
+          ${parsed.locations?.length ? `<div class="ner-entity-group"><label>📍 Locations (${parsed.locations.length})</label>${parsed.locations.map(l => `<span class="ner-tag location">${l}</span>`).join('')}</div>` : ''}
+          ${parsed.organizations?.length ? `<div class="ner-entity-group"><label>🏛️ Organizations (${parsed.organizations.length})</label>${parsed.organizations.map(o => `<span class="ner-tag data">${o}</span>`).join('')}</div>` : ''}
+          ${parsed.datapoints?.length ? `<div class="ner-entity-group"><label>📊 Data Points</label>${parsed.datapoints.map(d => `<span class="ner-tag data">${d}</span>`).join('')}</div>` : ''}
+        </div>
+      `;
     }
+
+    window.runNERon = async function (btn) {
+      const article = btn.closest('.ner-article');
+      const text = article.querySelector('.ner-article-text').textContent;
+      const resultBox = article.querySelector('.ner-result-box');
+      btn.textContent = 'Running...';
+      await callNER(text, resultBox);
+      btn.textContent = 'Run NER →';
+    };
+
+    window.runNER = async function () {
+      const text = document.getElementById('nerInput').value.trim();
+      if (!text) return;
+      const resultBox = document.getElementById('nerResult');
+      await callNER(text, resultBox);
+    };
   </script>
 
 </body>
