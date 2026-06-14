@@ -10,7 +10,7 @@
 
 <body>
 
-  <!-- Sidebar -->
+
   <aside class="sidebar">
     <div class="sidebar-logo"><a href="index.html" style="color: white; text-decoration: none;">Sakhi</a></div>
     <nav class="sidebar-nav">
@@ -22,7 +22,7 @@
     </nav>
   </aside>
 
-  <!-- Main -->
+
   <main class="main" style="padding-top: 40px; padding-bottom: 0; overflow: hidden;">
 
     <h1 style="font-family:'Sora',sans-serif; font-size:48px; font-weight:800; margin-bottom:28px; line-height:1.1;">
@@ -31,11 +31,11 @@
 
     <div class="chat-layout">
 
-      <!-- Chat column -->
+
       <div class="chat-col">
         <div class="chat-messages" id="chatMessages">
 
-          <!-- Sakhi greeting -->
+
           <div class="msg-sakhi">
             Namaste! 🙏 Main Sakhi hoon — aapki health companion.<br><br>
             Mujhe batayein aap kaisi feel kar rahi hain? Aap kisi bhi bhasha mein likh sakti hain — Hindi, English,
@@ -47,50 +47,49 @@
 
         </div>
 
-        <!-- Input bar -->
+
         <div class="chat-input-bar">
           <button class="mic-btn" id="micBtn" title="Click to talk">🎤</button>
-          
-          
+
+
           <input class="chat-input" type="text" placeholder="Enter text here..." id="chatInput" />
           <button class="send-btn" id="sendBtn">✈️</button>
         </div>
 
-      <!-- Right sidebar -->
-      <div class="chat-sidebar">
 
-        <div class="chat-sidebar-section">
-          <div class="chat-sidebar-title">Language Distribution</div>
-          <div class="lang-bar-row">
-            <div class="lang-bar-item">
-              <div class="lang-bar-label">...</div>
-              <div class="lang-bar-track">
-                <div class="lang-bar-fill fill-pink" style="width:62%;"></div>
+        <div class="chat-sidebar">
+
+          <div class="chat-sidebar-section">
+            <div class="chat-sidebar-title">Language Distribution</div>
+            <div class="lang-bar-row">
+              <div class="lang-bar-item">
+                <div class="lang-bar-label">...</div>
+                <div class="lang-bar-track">
+                  <div class="lang-bar-fill fill-pink" style="width:62%;"></div>
+                </div>
               </div>
-            </div>
-            <div class="lang-bar-item" style="margin-top:8px;">
-              <div class="lang-bar-label">...</div>
-              <div class="lang-bar-track">
-                <div class="lang-bar-fill fill-purple" style="width:38%;"></div>
+              <div class="lang-bar-item" style="margin-top:8px;">
+                <div class="lang-bar-label">...</div>
+                <div class="lang-bar-track">
+                  <div class="lang-bar-fill fill-purple" style="width:38%;"></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="chat-sidebar-section">
-          <div class="chat-sidebar-title">Clinical Terms</div>
-          <div class="clinical-terms-list">
+          <div class="chat-sidebar-section">
+            <div class="chat-sidebar-title">Clinical Terms</div>
+            <div class="clinical-terms-list">
 
+            </div>
           </div>
-        </div>
 
+        </div>
       </div>
-    </div>
   </main>
 
   <script type="module" src="chat.js"></script>
-  <!-- Indic Transliteration Library -->
-  <script src="https://unpkg.com/@sanskrit-coders/sanscript@1.2.0/sanscript.js"></script>
+
   <script src="speechtotext.js"></script>
 </body>
 
